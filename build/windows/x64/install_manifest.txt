@@ -1,0 +1,13 @@
+D:/private_code/login_demo/build/windows/x64/runner/Debug/data/icudtl.dat
+D:/private_code/login_demo/build/windows/x64/runner/Debug/flutter_windows.dll
+D:/private_code/login_demo/build/windows/x64/runner/Debug/data/flutter_assets/AssetManifest.bin
+D:/private_code/login_demo/build/windows/x64/runner/Debug/data/flutter_assets/AssetManifest.bin.json
+D:/private_code/login_demo/build/windows/x64/runner/Debug/data/flutter_assets/FontManifest.json
+D:/private_code/login_demo/build/windows/x64/runner/Debug/data/flutter_assets/fonts/MaterialIcons-Regular.otf
+D:/private_code/login_demo/build/windows/x64/runner/Debug/data/flutter_assets/kernel_blob.bin
+D:/private_code/login_demo/build/windows/x64/runner/Debug/data/flutter_assets/NativeAssetsManifest.json
+D:/private_code/login_demo/build/windows/x64/runner/Debug/data/flutter_assets/NOTICES
+D:/private_code/login_demo/build/windows/x64/runner/Debug/data/flutter_assets/NOTICES.Z
+D:/private_code/login_demo/build/windows/x64/runner/Debug/data/flutter_assets/packages/cupertino_icons/assets/CupertinoIcons.ttf
+D:/private_code/login_demo/build/windows/x64/runner/Debug/data/flutter_assets/shaders/ink_sparkle.frag
+D:/private_code/login_demo/build/windows/x64/runner/Debug/data/flutter_assets/shaders/stretch_effect.frag
