@@ -1,0 +1,76 @@
+sequenceDiagram
+    participant 1 as 业务调用方（如启动器）
+    participant 2 as 新SDK（客户端）
+    participant 3 as 新SDK（服务端）
+    participant 4 as 技术中心通行证服务
+    participant 5 as 游戏业务服务器
+    participant 6 as 终端应用（如游戏客户端）
+
+    %% 前置流程：SDK初始化
+    note over 1,3: 前置流程：新SDK初始化
+    1->>2: 初始化请求（appKey、deviceID、业务标识）
+    2->>2: 初始化本地环境（加密/缓存模块）
+    2->>3: 初始化校验（appKey、deviceID）
+    3->>2: 初始化结果（成功/失败+错误码）
+    alt 初始化失败
+        2->>1: 初始化失败（如appKey无效）
+    end
+
+    %% 流程1：主动登录（账号密码/验证码）
+    note over 1,4: 流程1：主动登录（账号密码/验证码）
+    1->>2: 调用登录接口（指定登录类型）
+    用户->>2: 输入登录凭证（账号密码/手机号验证码）
+    2->>2: 前端格式校验+敏感信息加密
+    2->>3: 加密凭证+deviceID+appKey
+    3->>3: 解密+接入方权限校验
+    3->>4: 凭证校验请求（解密后凭证+业务标识）
+    alt 中台校验失败
+        4->>3: 校验失败（错误码：账号不存在/密码错误等）
+        3->>2: 登录失败结果
+        2->>1: 登录失败+错误码
+    else 中台校验成功
+        4->>3: 用户信息（userID）
+        3->>3: 生成gameToken（关联userID/deviceID/appKey）
+        3->>4: 绑定gameToken与用户/设备
+        4->>3: 绑定成功确认
+        3->>2: 登录成功（userID、gameToken）
+        2->>2: 本地加密缓存gameToken+用户信息
+        2->>1: 登录成功+核心信息
+    end
+
+    %% 流程2：gameToken免登
+    note over 1,6: 流程2：基于gameToken的免登
+    1->>2: 调用免登接口（deviceID、appKey）
+    2->>2: 读取本地缓存gameToken（校验有效期）
+    alt 无有效Token
+        2->>1: 免登失败+建议触发主动登录
+    else 有有效Token
+        2->>3: 免登请求（gameToken、deviceID、appKey）
+        3->>4: 校验gameToken（Token+设备/接入方绑定关系）
+        alt Token校验失败
+            4->>3: 校验失败（过期/不匹配）
+            3->>2: 免登失败结果
+            2->>1: 免登失败+建议登录
+        else Token校验成功
+            4->>3: 用户信息（userID）
+            3->>5: 同步免登结果（userID、gameToken）
+            5->>3: 游戏业务鉴权结果（成功/失败）
+            alt 业务鉴权失败
+                3->>2: 免登失败（业务权限问题）
+                2->>1: 免登失败+错误说明
+            else 业务鉴权成功
+                5->>3: 用户游戏业务信息
+                3->>2: 免登成功（userInfo+游戏信息）
+                2->>6: 免登结果+启动参数
+                6->>1: 终端应用启动完成
+            end
+        end
+    end
+
+    %% 全局异常：网络中断
+    note over 2,4: 全局异常：网络中断
+    2->>2: 重试机制（3次，间隔1s）
+    alt 重试失败
+        2->>1: 网络异常+提示检查网络
+    end
+    

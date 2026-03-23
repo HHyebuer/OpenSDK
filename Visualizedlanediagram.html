@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenSDK 业务流程时序图</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #0a0a1a 0%, #0f0c29 50%, #1a0a2e 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+            color: #fff;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        h1 {
+            text-align: center;
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            background: linear-gradient(90deg, #6C63FF, #FF6584);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .subtitle {
+            text-align: center;
+            color: rgba(255,255,255,0.5);
+            font-size: 14px;
+            margin-bottom: 30px;
+        }
+        .diagram-wrapper {
+            background: rgba(255,255,255,0.03);
+            border-radius: 16px;
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+            overflow-x: auto;
+        }
+        .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+        .legend {
+            margin-top: 30px;
+            padding: 20px;
+            background: rgba(255,255,255,0.03);
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .legend h3 {
+            font-size: 16px;
+            margin-bottom: 15px;
+            color: #6C63FF;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin: 8px 0;
+            font-size: 14px;
+            color: rgba(255,255,255,0.7);
+        }
+        .legend-color {
+            width: 16px;
+            height: 16px;
+            border-radius: 4px;
+            margin-right: 10px;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            color: rgba(255,255,255,0.3);
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 OpenSDK 业务流程时序图</h1>
+        <p class="subtitle">NexusAuth SDK 完整登录流程可视化</p>
+        
+        <div class="diagram-wrapper">
+            <div class="mermaid">
+sequenceDiagram
+    participant 1 as 业务调用方（如启动器）
+    participant 2 as 新SDK（客户端）
+    participant 3 as 新SDK（服务端）
+    participant 4 as 技术中心通行证服务
+    participant 5 as 游戏业务服务器
+    participant 6 as 终端应用（如游戏客户端）
+
+    %% 前置流程：SDK初始化
+    note over 1,3: 前置流程：新SDK初始化
+    1->>2: 初始化请求（appKey、deviceID、业务标识）
+    2->>2: 初始化本地环境（加密/缓存模块）
+    2->>3: 初始化校验（appKey、deviceID）
+    3->>2: 初始化结果（成功/失败+错误码）
+    alt 初始化失败
+        2->>1: 初始化失败（如appKey无效）
+    end
+
+    %% 流程1：主动登录（账号密码/验证码）
+    note over 1,4: 流程1：主动登录（账号密码/验证码）
+    1->>2: 调用登录接口（指定登录类型）
+    用户->>2: 输入登录凭证（账号密码/手机号验证码）
+    2->>2: 前端格式校验+敏感信息加密
+    2->>3: 加密凭证+deviceID+appKey
+    3->>3: 解密+接入方权限校验
+    3->>4: 凭证校验请求（解密后凭证+业务标识）
+    alt 中台校验失败
+        4->>3: 校验失败（错误码：账号不存在/密码错误等）
+        3->>2: 登录失败结果
+        2->>1: 登录失败+错误码
+    else 中台校验成功
+        4->>3: 用户信息（userID）
+        3->>3: 生成gameToken（关联userID/deviceID/appKey）
+        3->>4: 绑定gameToken与用户/设备
+        4->>3: 绑定成功确认
+        3->>2: 登录成功（userID、gameToken）
+        2->>2: 本地加密缓存gameToken+用户信息
+        2->>1: 登录成功+核心信息
+    end
+
+    %% 流程2：gameToken免登
+    note over 1,6: 流程2：基于gameToken的免登
+    1->>2: 调用免登接口（deviceID、appKey）
+    2->>2: 读取本地缓存gameToken（校验有效期）
+    alt 无有效Token
+        2->>1: 免登失败+建议触发主动登录
+    else 有有效Token
+        2->>3: 免登请求（gameToken、deviceID、appKey）
+        3->>4: 校验gameToken（Token+设备/接入方绑定关系）
+        alt Token校验失败
+            4->>3: 校验失败（过期/不匹配）
+            3->>2: 免登失败结果
+            2->>1: 免登失败+建议登录
+        else Token校验成功
+            4->>3: 用户信息（userID）
+            3->>5: 同步免登结果（userID、gameToken）
+            5->>3: 游戏业务鉴权结果（成功/失败）
+            alt 业务鉴权失败
+                3->>2: 免登失败（业务权限问题）
+                2->>1: 免登失败+错误说明
+            else 业务鉴权成功
+                5->>3: 用户游戏业务信息
+                3->>2: 免登成功（userInfo+游戏信息）
+                2->>6: 免登结果+启动参数
+                6->>1: 终端应用启动完成
+            end
+        end
+    end
+
+    %% 全局异常：网络中断
+    note over 2,4: 全局异常：网络中断
+    2->>2: 重试机制（3次，间隔1s）
+    alt 重试失败
+        2->>1: 网络异常+提示检查网络
+    end
+            </div>
+        </div>
+
+        <div class="legend">
+            <h3>📋 流程说明</h3>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #22D3EE;"></div>
+                <span>前置流程：SDK 初始化 - 建立 SDK 运行环境</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #818CF8;"></div>
+                <span>流程1：主动登录 - 账号密码/验证码登录获取 gameToken</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #34D399;"></div>
+                <span>流程2：免登流程 - 基于 gameToken 的快速登录</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #FB923C;"></div>
+                <span>全局异常：网络中断处理机制</span>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>NexusAuth SDK v2.4.1 · Generated by Mermaid.js</p>
+        </div>
+    </div>
+
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'dark',
+            sequence: {
+                showSequenceNumbers: true,
+                actorFontSize: 14,
+                noteFontSize: 13,
+                messageFontSize: 12,
+                boxTextMargin: 5,
+                noteMargin: 10,
+                messageMargin: 35,
+                mirrorActors: false,
+                bottomMarginAdj: 1,
+                useMaxWidth: true,
+                rightAngles: false,
+                diagramMarginX: 50,
+                diagramMarginY: 10,
+                actorMargin: 50,
+                width: 150,
+                height: 65,
+                boxMargin: 10,
+                boxTextMargin: 5,
+                noteMargin: 10,
+                messageMargin: 35
+            },
+            themeCSS: `
+                .actor { fill: #1a1d2e; stroke: #6C63FF; stroke-width: 2px; }
+                .actor-line { stroke: #6C63FF; stroke-width: 1px; }
+                .messageLine0, .messageLine1 { stroke: #818CF8; stroke-width: 2px; }
+                .messageText { fill: #fff; font-size: 12px; }
+                .activation0, .activation1, .activation2 { fill: #6C63FF; stroke: #6C63FF; }
+                .note { fill: rgba(108, 99, 255, 0.15); stroke: #6C63FF; }
+                .noteText { fill: #fff; font-size: 12px; }
+                .labelBox { fill: #FF6584; stroke: #FF6584; }
+                .labelText { fill: #fff; }
+            `
+        });
+    </script>
+</body>
+</html>

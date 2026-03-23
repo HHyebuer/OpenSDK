@@ -12,13 +12,13 @@ class LoginStep {
   LoginStep({
     required this.message,
     required this.type,
-    this.phase = FlowPhase.init,
+    this.phase = FlowPhase.initial,
   }) : timestamp = DateTime.now();
 }
 
 enum LoginStepType { info, success, warning, error, processing }
 
-enum FlowPhase { init, activeLogin, autoLogin, logout, networkError }
+enum FlowPhase { initial, initialization, login, autoLogin, logout, networkError }
 
 /// SDK Auth service simulating full backend interaction
 class AuthService {
@@ -30,7 +30,7 @@ class AuthService {
     yield LoginStep(
       message: '>>> [SDK] Business caller triggered SDK init...',
       type: LoginStepType.info,
-      phase: FlowPhase.init,
+      phase: FlowPhase.initialization,
     );
     await Future.delayed(const Duration(milliseconds: 400));
 
@@ -38,14 +38,14 @@ class AuthService {
       message:
           '[SDK-CLIENT] Loading local environment (crypto/storage modules)...',
       type: LoginStepType.processing,
-      phase: FlowPhase.init,
+      phase: FlowPhase.initialization,
     );
     await Future.delayed(const Duration(milliseconds: 600));
 
     yield LoginStep(
       message: '[SDK-CLIENT] Generating deviceID fingerprint...',
       type: LoginStepType.processing,
-      phase: FlowPhase.init,
+      phase: FlowPhase.initialization,
     );
     await Future.delayed(const Duration(milliseconds: 400));
 
@@ -53,49 +53,49 @@ class AuthService {
     yield LoginStep(
       message: '[SDK-CLIENT] deviceID: $deviceId',
       type: LoginStepType.info,
-      phase: FlowPhase.init,
+      phase: FlowPhase.initialization,
     );
     await Future.delayed(const Duration(milliseconds: 300));
 
     yield LoginStep(
       message: '[SDK-SERVER] POST /sdk/v2/init  { appKey, deviceID }',
       type: LoginStepType.info,
-      phase: FlowPhase.init,
+      phase: FlowPhase.initialization,
     );
     await Future.delayed(const Duration(milliseconds: 700));
 
     yield LoginStep(
       message: '[SDK-SERVER] Validating appKey: ${_appKey.substring(0, 12)}...',
       type: LoginStepType.processing,
-      phase: FlowPhase.init,
+      phase: FlowPhase.initialization,
     );
     await Future.delayed(const Duration(milliseconds: 500));
 
     yield LoginStep(
       message: '[SDK-SERVER] appKey valid ✓  appID: $_appId',
       type: LoginStepType.success,
-      phase: FlowPhase.init,
+      phase: FlowPhase.initialization,
     );
     await Future.delayed(const Duration(milliseconds: 300));
 
     yield LoginStep(
       message: '[SDK-SERVER] Binding deviceID to session context...',
       type: LoginStepType.processing,
-      phase: FlowPhase.init,
+      phase: FlowPhase.initialization,
     );
     await Future.delayed(const Duration(milliseconds: 400));
 
     yield LoginStep(
       message: '[SDK-SERVER] Init result: SUCCESS  sessionCtx established ✓',
       type: LoginStepType.success,
-      phase: FlowPhase.init,
+      phase: FlowPhase.initialization,
     );
     await Future.delayed(const Duration(milliseconds: 300));
 
     yield LoginStep(
       message: '>>> [SDK] Initialization complete. Ready to show login UI.',
       type: LoginStepType.success,
-      phase: FlowPhase.init,
+      phase: FlowPhase.initialization,
     );
   }
 
@@ -109,7 +109,7 @@ class AuthService {
       message:
           '>>> [SDK] Login interface called (type: ${isSmsMode ? "SMS_CODE" : "PASSWORD"})',
       type: LoginStepType.info,
-      phase: FlowPhase.activeLogin,
+      phase: FlowPhase.login,
     );
     await Future.delayed(const Duration(milliseconds: 300));
 
@@ -117,7 +117,7 @@ class AuthService {
       message:
           '[SDK-CLIENT] User input received, starting front-end validation...',
       type: LoginStepType.processing,
-      phase: FlowPhase.activeLogin,
+      phase: FlowPhase.login,
     );
     await Future.delayed(const Duration(milliseconds: 400));
 
@@ -125,7 +125,7 @@ class AuthService {
     yield LoginStep(
       message: '[SDK-CLIENT] Encrypting sensitive credentials...',
       type: LoginStepType.processing,
-      phase: FlowPhase.activeLogin,
+      phase: FlowPhase.login,
     );
     await Future.delayed(const Duration(milliseconds: 500));
 
@@ -134,7 +134,7 @@ class AuthService {
       message:
           '[SDK-CLIENT] Username hash (MD5): ${usernameHash.substring(0, 16)}...',
       type: LoginStepType.info,
-      phase: FlowPhase.activeLogin,
+      phase: FlowPhase.login,
     );
     await Future.delayed(const Duration(milliseconds: 300));
 
@@ -143,7 +143,7 @@ class AuthService {
       message:
           '[SDK-CLIENT] Credential hash (SHA-256): ${credHash.substring(0, 20)}...',
       type: LoginStepType.info,
-      phase: FlowPhase.activeLogin,
+      phase: FlowPhase.login,
     );
     await Future.delayed(const Duration(milliseconds: 400));
 
@@ -151,7 +151,7 @@ class AuthService {
       message:
           '[SDK-CLIENT] Applying RSA-2048 encryption with server pubKey...',
       type: LoginStepType.processing,
-      phase: FlowPhase.activeLogin,
+      phase: FlowPhase.login,
     );
     await Future.delayed(const Duration(milliseconds: 600));
 
@@ -160,28 +160,28 @@ class AuthService {
       message:
           '[SDK-CLIENT] Payload: { encryptedCredential + deviceID + appKey }',
       type: LoginStepType.info,
-      phase: FlowPhase.activeLogin,
+      phase: FlowPhase.login,
     );
     await Future.delayed(const Duration(milliseconds: 300));
 
     yield LoginStep(
       message: '[SDK-SERVER] POST /sdk/v2/login  TLS 1.3',
       type: LoginStepType.info,
-      phase: FlowPhase.activeLogin,
+      phase: FlowPhase.login,
     );
     await Future.delayed(const Duration(milliseconds: 500));
 
     yield LoginStep(
       message: '[SDK-SERVER] Decrypting payload with RSA private key...',
       type: LoginStepType.processing,
-      phase: FlowPhase.activeLogin,
+      phase: FlowPhase.login,
     );
     await Future.delayed(const Duration(milliseconds: 600));
 
     yield LoginStep(
       message: '[SDK-SERVER] Validating business permission scope...',
       type: LoginStepType.processing,
-      phase: FlowPhase.activeLogin,
+      phase: FlowPhase.login,
     );
     await Future.delayed(const Duration(milliseconds: 400));
 
@@ -189,28 +189,28 @@ class AuthService {
     yield LoginStep(
       message: '[TECH-CENTER] Credential validation request received...',
       type: LoginStepType.processing,
-      phase: FlowPhase.activeLogin,
+      phase: FlowPhase.login,
     );
     await Future.delayed(const Duration(milliseconds: 700));
 
     yield LoginStep(
       message: '[TECH-CENTER] Querying user database...',
       type: LoginStepType.processing,
-      phase: FlowPhase.activeLogin,
+      phase: FlowPhase.login,
     );
     await Future.delayed(const Duration(milliseconds: 500));
 
     yield LoginStep(
       message: '[TECH-CENTER] User record found, verifying credential hash...',
       type: LoginStepType.processing,
-      phase: FlowPhase.activeLogin,
+      phase: FlowPhase.login,
     );
     await Future.delayed(const Duration(milliseconds: 400));
 
     yield LoginStep(
       message: '[TECH-CENTER] Credential verification passed ✓',
       type: LoginStepType.success,
-      phase: FlowPhase.activeLogin,
+      phase: FlowPhase.login,
     );
     await Future.delayed(const Duration(milliseconds: 300));
 
@@ -218,7 +218,7 @@ class AuthService {
     yield LoginStep(
       message: '[TECH-CENTER] userID assigned: $userId',
       type: LoginStepType.info,
-      phase: FlowPhase.activeLogin,
+      phase: FlowPhase.login,
     );
     await Future.delayed(const Duration(milliseconds: 300));
 
@@ -227,7 +227,7 @@ class AuthService {
       message:
           '[SDK-SERVER] Generating gameToken (userID + deviceID + appKey)...',
       type: LoginStepType.processing,
-      phase: FlowPhase.activeLogin,
+      phase: FlowPhase.login,
     );
     await Future.delayed(const Duration(milliseconds: 500));
 
@@ -235,28 +235,28 @@ class AuthService {
     yield LoginStep(
       message: '[SDK-SERVER] gameToken: ${gameToken.substring(0, 28)}...',
       type: LoginStepType.info,
-      phase: FlowPhase.activeLogin,
+      phase: FlowPhase.login,
     );
     await Future.delayed(const Duration(milliseconds: 300));
 
     yield LoginStep(
       message: '[GAME-SERVER] Binding gameToken to user/device record...',
       type: LoginStepType.processing,
-      phase: FlowPhase.activeLogin,
+      phase: FlowPhase.login,
     );
     await Future.delayed(const Duration(milliseconds: 500));
 
     yield LoginStep(
       message: '[GAME-SERVER] Binding confirmed ✓',
       type: LoginStepType.success,
-      phase: FlowPhase.activeLogin,
+      phase: FlowPhase.login,
     );
     await Future.delayed(const Duration(milliseconds: 300));
 
     yield LoginStep(
       message: '[SDK-SERVER] Login success → { userID, gameToken } returned',
       type: LoginStepType.success,
-      phase: FlowPhase.activeLogin,
+      phase: FlowPhase.login,
     );
     await Future.delayed(const Duration(milliseconds: 300));
 
@@ -264,14 +264,14 @@ class AuthService {
       message:
           '[SDK-CLIENT] Encrypting & storing gameToken + userInfo locally...',
       type: LoginStepType.processing,
-      phase: FlowPhase.activeLogin,
+      phase: FlowPhase.login,
     );
     await Future.delayed(const Duration(milliseconds: 400));
 
     yield LoginStep(
       message: '[SDK-CLIENT] Local cache updated ✓',
       type: LoginStepType.success,
-      phase: FlowPhase.activeLogin,
+      phase: FlowPhase.login,
     );
     await Future.delayed(const Duration(milliseconds: 300));
 
@@ -279,7 +279,7 @@ class AuthService {
       message:
           '>>> [SDK] Login success callback → { userID, gameToken, coreInfo }',
       type: LoginStepType.success,
-      phase: FlowPhase.activeLogin,
+      phase: FlowPhase.login,
     );
   }
 

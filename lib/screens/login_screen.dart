@@ -25,7 +25,7 @@ class _LoginScreenState extends State<LoginScreen>
   String? _userId;
   String? _gameToken;
 
-  FlowPhase _currentPhase = FlowPhase.init;
+  FlowPhase _currentPhase = FlowPhase.initial;
   final List<LoginStep> _flowSteps = [];
 
   // ── Animations ─────────────────────────────────────────────────────────────
@@ -81,7 +81,7 @@ class _LoginScreenState extends State<LoginScreen>
       // First: init SDK
       setState(() {
         _sdkInitializing = true;
-        _currentPhase = FlowPhase.init;
+        _currentPhase = FlowPhase.initialization;
         _flowSteps.clear();
       });
       await for (final step in AuthService.initSDK()) {
@@ -117,7 +117,7 @@ class _LoginScreenState extends State<LoginScreen>
   Future<void> _runActiveLoginFlow(String username) async {
     setState(() {
       _loginProcessing = true;
-      _currentPhase = FlowPhase.activeLogin;
+      _currentPhase = FlowPhase.login;
     });
 
     String? capturedUserId;
@@ -245,12 +245,6 @@ class _LoginScreenState extends State<LoginScreen>
           child: Padding(
             padding: const EdgeInsets.fromLTRB(0, 24, 24, 24),
             child: FlowDiagram(
-              steps: _flowSteps,
-              isLoading:
-                  _sdkInitializing ||
-                  _loginProcessing ||
-                  _autoLoginProcessing ||
-                  _logoutProcessing,
               currentPhase: _currentPhase,
             ),
           ),
@@ -270,12 +264,6 @@ class _LoginScreenState extends State<LoginScreen>
               child: SizedBox(
                 height: 400,
                 child: FlowDiagram(
-                  steps: _flowSteps,
-                  isLoading:
-                      _sdkInitializing ||
-                      _loginProcessing ||
-                      _autoLoginProcessing ||
-                      _logoutProcessing,
                   currentPhase: _currentPhase,
                 ),
               ),
