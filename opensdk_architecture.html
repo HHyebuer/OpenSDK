@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OpenSDK 业务架构图</title>
+    <title>ZentrySDK 业务架构图</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
@@ -160,7 +160,7 @@
                     </svg>
                 </div>
                 <div>
-                    <h1 class="text-xl font-bold glow-text">OpenSDK</h1>
+                    <h1 class="text-xl font-bold glow-text">ZentrySDK</h1>
                     <p class="text-xs text-white/50">业务架构全景图</p>
                 </div>
             </div>
@@ -184,7 +184,7 @@
             <!-- Title Section -->
             <div class="text-center mb-10 animate-fade-in">
                 <h2 class="text-4xl md:text-5xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-white via-[#6C63FF] to-[#FF6584]">
-                    OpenSDK 业务架构图
+                    ZentrySDK 业务架构图
                 </h2>
                 <p class="text-white/60 max-w-2xl mx-auto text-lg">
                     六层架构设计，覆盖从业务接入到运营数据的全链路能力
@@ -513,7 +513,7 @@ graph TB
     <footer class="border-t border-white/10 py-6 px-6">
         <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
             <p class="text-white/40 text-sm">
-                OpenSDK Architecture Visualization
+                ZentrySDK Architecture Visualization
             </p>
             <p class="text-white/40 text-sm">
                 Generated with Mermaid.js
@@ -581,7 +581,7 @@ graph TB
                 const url = URL.createObjectURL(blob);
                 const link = document.createElement('a');
                 link.href = url;
-                link.download = 'OpenSDK-Architecture.svg';
+                link.download = 'ZentrySDK-Architecture.svg';
                 document.body.appendChild(link);
                 link.click();
                 document.body.removeChild(link);

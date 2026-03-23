@@ -231,7 +231,7 @@ class _LoginScreenState extends State<LoginScreen>
     return Row(
       children: [
         Expanded(
-          flex: 55,
+          flex: 48,
           child: FadeTransition(
             opacity: _heroFade,
             child: SlideTransition(
@@ -241,7 +241,7 @@ class _LoginScreenState extends State<LoginScreen>
           ),
         ),
         Expanded(
-          flex: 45,
+          flex: 52,
           child: Padding(
             padding: const EdgeInsets.fromLTRB(0, 24, 24, 24),
             child: FlowDiagram(

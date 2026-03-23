@@ -117,9 +117,9 @@ class _FlowDiagramState extends State<FlowDiagram>
     );
   }
 
-  // 前置流程：OpenSDK初始化
+  // 前置流程：ZentrySDK初始化
   Widget _buildInitializationFlow() {
-    final participants = ['业务调用方', 'OpenSDK\n(客户端)', 'OpenSDK\n(服务端)'];
+    final participants = ['业务调用方', 'ZentrySDK\n(客户端)', 'ZentrySDK\n(服务端)'];
     final colors = [
       const Color(0xFFE8D5B7),
       const Color(0xFFB8E6D4),
@@ -135,7 +135,7 @@ class _FlowDiagramState extends State<FlowDiagram>
     ];
 
     return _buildSequenceDiagram(
-      '前置流程：OpenSDK初始化',
+      '前置流程：ZentrySDK初始化',
       participants,
       colors,
       messages,
@@ -145,7 +145,7 @@ class _FlowDiagramState extends State<FlowDiagram>
 
   // 流程1：主动登录（账号密码/验证码）
   Widget _buildLoginFlow() {
-    final participants = ['业务调用方', 'OpenSDK\n(客户端)', 'OpenSDK\n(服务端)', '技术中心\n账号管理', '用户'];
+    final participants = ['业务调用方', 'ZentrySDK\n(客户端)', 'ZentrySDK\n(服务端)', '技术中心\n账号管理', '用户'];
     final colors = [
       const Color(0xFFE8D5B7),
       const Color(0xFFB8E6D4),
@@ -183,7 +183,7 @@ class _FlowDiagramState extends State<FlowDiagram>
 
   // 流程2：免登/自动登录（基于gameToken）
   Widget _buildAutoLoginFlow() {
-    final participants = ['业务调用方', 'OpenSDK\n(客户端)', 'OpenSDK\n(服务端)', '技术中心\n账号管理', '西瓜SDK\n/游戏服务', '终端应用'];
+    final participants = ['业务调用方', 'ZentrySDK\n(客户端)', 'ZentrySDK\n(服务端)', '技术中心\n账号管理', '西瓜SDK\n/游戏服务', '终端应用'];
     final colors = [
       const Color(0xFFE8D5B7),
       const Color(0xFFB8E6D4),
@@ -217,7 +217,7 @@ class _FlowDiagramState extends State<FlowDiagram>
 
   // 流程3：退出登录
   Widget _buildLogoutFlow() {
-    final participants = ['业务调用方', 'OpenSDK\n(客户端)', 'OpenSDK\n(服务端)'];
+    final participants = ['业务调用方', 'ZentrySDK\n(客户端)', 'ZentrySDK\n(服务端)'];
     final colors = [
       const Color(0xFFE8D5B7),
       const Color(0xFFB8E6D4),
